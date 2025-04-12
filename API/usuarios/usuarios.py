@@ -35,7 +35,7 @@ def login():
             
         cursor = conn.cursor(dictionary=True)
         
-        cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (datos.get('email'),))
+        cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (datos.get('correo'),))
         usuario = cursor.fetchone()
         
         if not usuario or not bcrypt.checkpw(datos.get('password', '').encode(), usuario['password'].encode()):
@@ -48,7 +48,7 @@ def login():
             'usuario': {
                 'id': usuario['id'],
                 'nombre': usuario['nombre'],
-                'email': usuario['correo'],
+                'correo': usuario['correo'],
                 'rol': usuario['rol']
             }
         }), 200
@@ -66,15 +66,15 @@ def registro():
             
         cursor = conn.cursor(dictionary=True)
         
-        cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (datos.get('email'),))
+        cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (datos.get('correo'),))
         if cursor.fetchone():
-            return jsonify({'mensaje': 'Email ya registrado'}), 409
+            return jsonify({'mensaje': 'correo ya registrado'}), 409
         
         hashed = bcrypt.hashpw(datos.get('password', '').encode(), bcrypt.gensalt())
         
         cursor.execute(
             "INSERT INTO usuarios (correo, password, nombre, telefono, direccion, rol) VALUES (%s, %s, %s, %s, %s, %s)",
-            (datos.get('email'), 
+            (datos.get('correo'), 
              hashed.decode(), 
              datos.get('nombre'), 
              datos.get('telefono', ''), 
@@ -92,7 +92,7 @@ def registro():
             'usuario': {
                 'id': usuario_id,
                 'nombre': datos.get('nombre'),
-                'email': datos.get('email'),
+                'correo': datos.get('correo'),
                 'rol': 'cliente'
             }
         }), 201

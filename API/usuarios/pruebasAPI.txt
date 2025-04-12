@@ -1,0 +1,23 @@
+Método: POST
+URL: http://localhost:5001/registro
+Body (JSON):
+
+{
+  "correo": "cliente@ejemplo.com",
+  "password": "contraseña123",
+  "nombre": "Cliente Ejemplo",
+  "telefono": "1234567890",
+  "direccion": "Calle Principal 123, Ciudad"
+}
+
+
+2. Registrar usuario con correo duplicado (prueba negativa)
+Método: POST
+URL: http://localhost:5001/registro
+Body (JSON):
+
+{
+  "correo": "cliente@ejemplo.com",
+  "password": "contraseña123",
+  "nombre": "Otro Usuario"
+}

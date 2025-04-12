@@ -20,9 +20,9 @@ CORS(app, resources={
     }
 })
 
-USUARIOS_URL = os.getenv('USUARIOS_URL', 'http://usuarios:5001')
-CATALOGO_URL = os.getenv('CATALOGO_URL', 'http://catalogo:5002')
-PEDIDOS_URL = os.getenv('PEDIDOS_URL', 'http://pedidos:5003')
+USUARIOS_URL = os.getenv('USUARIOS_URL', 'http://localhost:5001')
+CATALOGO_URL = os.getenv('CATALOGO_URL', 'http://localhost:5002')
+PEDIDOS_URL = os.getenv('PEDIDOS_URL', 'http://localhost:5003')
 
 # 1. Autenticación
 @app.route('/auth/login', methods=['POST'])
