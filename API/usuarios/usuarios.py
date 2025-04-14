@@ -4,11 +4,24 @@ import mysql.connector
 import bcrypt
 import datetime
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "http://localhost:3000", 
+            "http://127.0.0.1:3000",
+            "http://localhost:5501",
+            "http://127.0.0.1:5501"
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', '127.0.0.1'),

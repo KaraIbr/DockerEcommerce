@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: ecommerce_db
+    environment:
+      MYSQL_ROOT_PASSWORD: luna2025
+      MYSQL_DATABASE: luna
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./API/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  usuarios:
+    build:
+      context: ./API
+      dockerfile: usuarios/Dockerfile
+    container_name: ecommerce_usuarios
+    ports:
+      - "5001:5001"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=luna2025
+      - DB_NAME=luna
+    volumes:
+      - ./API/usuarios:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  catalogo:
+    build:
+      context: ./API
+      dockerfile: catalogo/Dockerfile
+    container_name: ecommerce_catalogo
+    ports:
+      - "5002:5002"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=luna2025
+      - DB_NAME=luna
+    volumes:
+      - ./API/catalogo:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  pedidos:
+    build:
+      context: ./API
+      dockerfile: pedidos/Dockerfile
+    container_name: ecommerce_pedidos
+    ports:
+      - "5003:5003"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=luna2025
+      - DB_NAME=luna
+    volumes:
+      - ./API/pedidos:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: ./API
+      dockerfile: gateway/Dockerfile
+    container_name: ecommerce_gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - USUARIOS_URL=http://usuarios:5001
+      - CATALOGO_URL=http://catalogo:5002
+      - PEDIDOS_URL=http://pedidos:5003
+    volumes:
+      - ./API/gateway:/app
+    depends_on:
+      - usuarios
+      - catalogo
+      - pedidos
+
+volumes:
+  mysql_data:
